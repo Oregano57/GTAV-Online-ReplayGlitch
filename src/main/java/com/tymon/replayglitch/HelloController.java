@@ -8,29 +8,39 @@ public class HelloController {
     @FXML
     private Label statusLabel;
 
-
     @FXML
     protected void onActionOneClick() {
-        String command = "netsh advfirewall firewall add rule name=GTAReplayGlitch dir=out action=block remoteip=192.81.241.171";
-        runWindowsCommand(command, "Firewall Rule Added");
+        // Enclosed the rule name in explicit quotes \" to ensure Windows parses it cleanly
+        String command = "netsh advfirewall firewall add rule name=\"GTAReplayGlitch\" dir=out action=block remoteip=192.81.241.171";
+        runWindowsCommand(command, "Firewall Rule Added", "Active");
     }
+
     @FXML
     protected void onActionTwoClick(){
-        String command = "netsh advfirewall firewall delete rule name=GTAReplayGlitch";
-        runWindowsCommand(command, "Firewall Rule Removed");
+        // Enclosed the rule name in explicit quotes \" to ensure Windows parses it cleanly
+        String command = "netsh advfirewall firewall delete rule name=\"GTAReplayGlitch\"";
+        runWindowsCommand(command, "Firewall Rule Removed", "Inactive");
     }
 
-    private void runWindowsCommand(String command, String successMessage){
+    private void runWindowsCommand(String command, String successMessage, String uiStatus){
         try {
             ProcessBuilder pb = new ProcessBuilder("cmd.exe", "/c", command);
+            pb.redirectErrorStream(true);
             Process process = pb.start();
-            int exitCode = process.waitFor();
 
-            if(exitCode == 0) {
-                statusLabel.setText("Active");
-                System.out.println(successMessage);
+            java.io.BufferedReader reader = new java.io.BufferedReader(
+                    new java.io.InputStreamReader(process.getInputStream())
+            );
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("CMD Output: " + line);
             }
-            else {
+
+            int exitCode = process.waitFor();
+            if(exitCode == 0) {
+                statusLabel.setText(uiStatus); // Dynamically updates to "Active" or "Inactive"
+                System.out.println(successMessage);
+            } else {
                 System.out.println("Error Code: " + exitCode);
             }
         }
@@ -38,6 +48,5 @@ public class HelloController {
             statusLabel.setText("System Error");
             e.printStackTrace();
         }
-
     }
 }
