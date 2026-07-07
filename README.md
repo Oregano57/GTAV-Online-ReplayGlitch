@@ -1,4 +1,4 @@
-Commit Messages may look funky
+> Commit Messages may look funky
 
 ## Getting Started
 
