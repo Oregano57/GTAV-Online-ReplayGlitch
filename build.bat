@@ -31,8 +31,8 @@ echo === Step 2: Embedding UAC manifest into app-image exe ===
 echo === Step 3: Building installer from patched app-image (v%APP_VERSION%) ===
 jpackage --type exe --name "ReplayGlitch" --app-version %APP_VERSION% --app-image "%PROJECT_DIR%dist\ReplayGlitch" --dest "%PROJECT_DIR%installer" --win-menu --win-shortcut --win-dir-chooser --win-upgrade-uuid 3f9a1d2c-6b4e-4a0f-9c2a-1e7f5d8b0a11
 
-if not exist "%PROJECT_DIR%installer" (
-    echo [ERROR] Installer build failed. Stopping.
+if not exist "%PROJECT_DIR%installer\ReplayGlitch-%APP_VERSION%.exe" (
+    echo [ERROR] Installer build failed - exe not found. Stopping.
     exit /b 1
 )
 
